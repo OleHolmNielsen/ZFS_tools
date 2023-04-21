@@ -51,15 +51,20 @@ do
 	echo "User	  Filesys --      Space      Quota   Pct.     Files     Quota   Pct."
 	echo "--------  ------- --      -----      -----   ----     -----     -----   ----"
 	zfs userspace $fs -pH -o name,quota,used,objquota,objused | awk -vlimit=$warn_limit -vfs=$fs -vusername=$username '
+	BEGIN {
+		GB=1024*1024*1024
+	}
 	{ name=$1
 	# Check if username was specified
 	if (length(username)>0 && name != username) next
 	# Convert used space to GBytes
-	quota=$2 / (1024*1024*1024)
-	used=$3 / (1024*1024*1024)
+	quota=$2 / GB
+	used=$3 / GB
+	usedpercent=0
 	overused="-"
 	filesquota=$4
 	filesused=$5
+	filepercent=0
 	overfiles="-"
 	usedpercent= 0
 	if (quota>0) {
