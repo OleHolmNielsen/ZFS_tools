@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+
+# Print ZFS filesystem user disk quotas in a format similar to Linux "repquota".
+# Used disk space is reported in GBytes.
+# ZFS has no concept of soft quota limits.
+
+# Defile the warning limit (percentage)
+export warn_limit=80
+
+# Command usage:
+function usage()
+{
+cat <<EOF
+Usage: $0 [-u username] [-h] [filesystem]
+where:
+        -u username: Print only user <username>
+        -h: Print this help information
+        filesystem: specified filesystem (default: all)
+EOF
+}
+
+username=""
+
+while getopts "u:h" options; do
+	case $options in
+		u )     export username=$OPTARG
+			;;
+		h|? ) usage
+			exit 1;;
+	esac
+done
+shift $((OPTIND-1))
+
+if [[ $# -eq 1 ]]
+then
+	# Check the specified ZFS volume argument as $1
+	if [[ "`/usr/sbin/zfs list | grep $1`" == "" ]]
+	then
+		echo Invalid ZFS filesystem name: $1
+		exit -1
+	fi
+	zfsVolumes=$1
+else
+	# All ZFS volumes
+	zfsVolumes=$(/sbin/zpool list -H -o name)
+fi
+
+for fs in $zfsVolumes
+do
+	echo "User	  Filesys --      Space      Quota   Pct.     Files     Quota   Pct."
+	echo "--------  ------- --      -----      -----   ----     -----     -----   ----"
+	zfs userspace $fs -pH -o name,quota,used,objquota,objused | awk -vlimit=$warn_limit -vfs=$fs -vusername=$username '
+	{ name=$1
+	# Check if username was specified
+	if (length(username)>0 && name != username) next
+	# Convert used space to GBytes
+	quota=$2 / (1024*1024*1024)
+	used=$3 / (1024*1024*1024)
+	overused="-"
+	filesquota=$4
+	filesused=$5
+	overfiles="-"
+	usedpercent= 0
+	if (quota>0) {
+		usedpercent= (used*100) / quota
+		if (usedpercent>limit) overused="+"
+	}
+	filepercent= 0
+	if (filesquota>0) {
+		filepercent= (filesused*100) / filesquota
+		if (filepercent>limit) overfiles="+"
+	}
+	# Print percentages after the quotas
+	printf("%s\t%9s %1s%1s %9.1fG %9.0fG %6.1f %9d %9d %6.1f\n",
+		name, fs, overused, overfiles, used, quota, usedpercent, filesused, filesquota, filepercent)	
+	}'
+done

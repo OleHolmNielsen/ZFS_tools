@@ -1,0 +1,66 @@
+#!/bin/sh
+
+# Notify users that are over their disk quota
+
+REPQUOTA=/usr/local/bin/zfsrepquota
+QUOTA=/usr/local/bin/zfsquota
+MAIL=/bin/mail
+
+USERS=`${REPQUOTA} | grep + | sed /none/d | awk '{print $1}'`
+HOST=`hostname`
+
+# Exclude users who don't want these warnings:
+# Remove leading # in numerical UIDs
+WUSERS=`echo $USERS | sed -e '
+/root/d
+/#/s///g
+'`
+
+# Temporary storage of alert data
+TMPDIR=/var/lib/over_quota
+if test ! -d $TMPDIR
+then
+	mkdir -v $TMPDIR
+fi
+MESSAGE=$TMPDIR/mesg.$$
+cat <<EOF > $MESSAGE
+
+========================================================================
+
+WARNING: Your disk usage is nearing the quota limit on the fileserver named ${HOST}.
+
+========================================================================
+
+This is the location of your directory on one of the NIFLHEIM fileservers.
+
+NOTICE: This server uses a ZFS filesystem which cannot issue warnings about
+quota soft and hard limit. When you hit the (hard) limit,
+you will no longer be able to write any new files.
+
+Please reduce your files as soon as possible, or contact the IT Support staff
+(niflheim-support@fysik.dtu.dk) for an adjustment of your disk quota (make sure to
+include the present mail for the support).
+
+For explanation of disk quota: https://en.wikipedia.org/wiki/Disk_quota
+
+EOF
+
+for i in `echo $WUSERS`
+do
+	echo
+	# Check if the username is an integer UID:
+	if [[ ${i} =~ ^[0-9]+$ ]]
+	then
+		echo "User $i is an integer UID not in the passwd database"
+	else
+		( cat $MESSAGE; ${QUOTA} -i $i) | \
+			${MAIL} -s "WARNING: Your disk quota on server ${HOST} is exceeded" ${i}
+		NAME=`getent passwd $i | awk -F: '{print $5}'`
+		echo Sent quota warning for host ${HOST} to user $i, ${NAME}
+		echo Password entry: `getent passwd $i`
+		echo
+	fi
+	${REPQUOTA} -u $i
+done
+
+rm -f $MESSAGE

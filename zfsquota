@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# Print ZFS filesystem user disk quotas in a format similar to Linux "repquota".
+# ZFS has no concept of soft quota limits.
+
+echo "ZFS filesystem quota for user $USER"
+/usr/local/bin/zfsrepquota -u $USER
