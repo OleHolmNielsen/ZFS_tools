@@ -10,12 +10,12 @@ See also the [OpenZFS][3] developers page.
 
 We have written a quick [guide for configuring ZFS][6].
 
-[1] https://en.wikipedia.org/wiki/ZFS
-[2] https://zfsonlinux.org/
-[3] https://openzfs.org/wiki/Main_Page
-[4] https://en.wikipedia.org/wiki/Oracle_Solaris
-[5] https://en.wikipedia.org/wiki/XFS
-[6] https://wiki.fysik.dtu.dk/ITwiki/ZFS_filesystems/
+[1]: https://en.wikipedia.org/wiki/ZFS
+[2]: https://zfsonlinux.org/
+[3]: https://openzfs.org/wiki/Main_Page
+[4]: https://en.wikipedia.org/wiki/Oracle_Solaris
+[5]: https://en.wikipedia.org/wiki/XFS
+[6]: https://wiki.fysik.dtu.dk/ITwiki/ZFS_filesystems/
 
 Tools for the ZFS filesystem
 =============================
