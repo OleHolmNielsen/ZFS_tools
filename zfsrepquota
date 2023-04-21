@@ -4,7 +4,8 @@
 # Used disk space is reported in GBytes.
 # ZFS has no concept of soft quota limits.
 
-# Defile the warning limit (percentage)
+# CONFIGURE THIS:
+# Defile the quota warning limit (percentage)
 export warn_limit=80
 
 # Command usage:
