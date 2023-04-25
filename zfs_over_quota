@@ -53,7 +53,7 @@ do
 	then
 		echo "User $i is an integer UID not in the passwd database"
 	else
-		( cat $MESSAGE; ${QUOTA} -i $i) | \
+		( cat $MESSAGE; ${QUOTA} $i) | \
 			${MAIL} -s "WARNING: Your disk quota on server ${HOST} is exceeded" ${i}
 		NAME=`getent passwd $i | awk -F: '{print $5}'`
 		echo Sent quota warning for host ${HOST} to user $i, ${NAME}
