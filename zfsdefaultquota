@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+# Set ZFS filesystem user disk quotas to default values.
+# Existing quotas are not modified.
+
+# Usage: zfsdefaultquota <userquota> <objquota> <filesystem>
+
+if [[ $# -eq 3 ]]
+then
+	userquota=$1
+	objquota=$2
+	filesystem=$3
+else
+	echo "ERROR: 3 arguments needed:"
+	echo "zfsdefaultquota <userquota> <objquota> <filesystem>"
+	exit 1
+fi
+
+# Get current quotas
+/usr/sbin/zfs userspace -H -o name,quota,objquota $filesystem | awk -v userquota=$userquota -v objquota=$objquota -v filesystem=$filesystem '
+{
+	name=$1
+	cmd=""
+	if ($2 == "none") 	# Set the default quota
+		cmd=sprintf("userquota@%s=%s", name, userquota)
+	if ($3 == "none") 	# Set the default quota
+		cmd=cmd " " sprintf("userobjquota@%s=%s", name, objquota)
+	if (cmd != "")
+		print "zfs set " cmd " " filesystem
+}' | bash
+
+# Print all quotas
+/usr/sbin/zfs userspace -o name,quota,used,objquota,objused $filesystem
