@@ -28,7 +28,7 @@ We provide the following scripts for checking ZFS user quotas by the **root user
    use ``-u username`` to limit to a single user.
    Copy this script to the /usr/local/sbin/ folder.
 
-2. [zfsquota](zfsquota) A simple quota command for the current user.
+2. [zfsdefaultquota](zfsdefaultquota) Set default quotas for all users in a filesystem
 
 3. [zfs_over_quota](zfs_over_quota) Send E-mail alerts from the file server to users who are getting close to their quota limit.
    Copy this script to the /usr/local/sbin/ folder.
