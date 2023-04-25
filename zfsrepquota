@@ -45,15 +45,19 @@ then
 	zfsVolumes=$1
 else
 	# All ZFS volumes
-	zfsVolumes=$(/sbin/zpool list -H -o name)
+	zfsVolumes=$(/usr/sbin/zfs list -H -o name)
 fi
 
 for fs in $zfsVolumes
 do
-	echo "User	  Filesys --      Space      Quota   Pct.     Files     Quota   Pct."
-	echo "--------  ------- --      -----      -----   ----     -----     -----   ----"
 	/usr/sbin/zfs userspace $fs -pH -o name,quota,used,objquota,objused | awk -vlimit=$warn_limit -vfs=$fs -vusername=$username '
 	BEGIN {
+		fslen=length(fs)
+		fsheader="Filesystem"
+		for (i=0; i<fslen; i++) fsline=fsline "-"	# Line below "Filesystem"
+		print ""
+		printf("%*-s %*-s --      Space      Quota   Pct.     Files     Quota   Pct.\n", 8 , "User", fslen, fsheader)
+		printf("%*s %*s --      -----      -----   ----     -----     -----   ----\n", 8 , "--------", fslen, fsline)
 		GB=1024*1024*1024
 	}
 	{ name=$1
@@ -79,7 +83,7 @@ do
 		if (filepercent>limit) overfiles="+"
 	}
 	# Print percentages after the quotas
-	printf("%s\t%9s %1s%1s %9.1fG %9.0fG %6.1f %9d %9d %6.1f\n",
-		name, fs, overused, overfiles, used, quota, usedpercent, filesused, filesquota, filepercent)	
+	printf("%-8s %*-s %1s%1s %9.1fG %9.0fG %6.1f %9d %9d %6.1f\n",
+		name, fslen, fs, overused, overfiles, used, quota, usedpercent, filesused, filesquota, filepercent)	
 	}'
 done
