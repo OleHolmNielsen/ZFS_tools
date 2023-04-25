@@ -22,11 +22,24 @@ The files in the present repository augment the tools provided by the
 [ZFS][1] software stack.
 Mainly lacking are tools for handling **user disk quotas**.
 
-We provide the following scripts for checking ZFS user quotas:
+We provide the following scripts for checking ZFS user quotas by the **root user only**:
 
 1. [zfsrepquota](zfsrepquota) Report ZFS disk quotas,
    use ``-u username`` to limit to a single user.
+   Copy this script to the /usr/local/sbin/ folder.
 
 2. [zfsquota](zfsquota) A simple quota command for the current user.
 
 3. [zfs_over_quota](zfs_over_quota) Send E-mail alerts from the file server to users who are getting close to their quota limit.
+   Copy this script to the /usr/local/sbin/ folder.
+
+Periodic reports can be sent by a crontab jobs, for example:
+
+```
+10 8,13,17 * * * /usr/local/sbin/zfs_over_quota
+```
+
+Caching of quota reports for NFS clients and normal users
+----------------------------------------------------------
+
+The ``zfs userspace`` command is only permitted for the root user.
