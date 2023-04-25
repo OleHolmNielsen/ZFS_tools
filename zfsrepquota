@@ -2,7 +2,9 @@
 
 # Print ZFS filesystem user disk quotas in a format similar to Linux "repquota".
 # Used disk space is reported in GBytes.
-# ZFS has no concept of soft quota limits.
+# Note: ZFS has no concept of "soft quota limits".
+# The zfs userspace command is only permitted for the root user, therefore
+# copy this script to the /usr/local/sbin/ folder.
 
 # CONFIGURE THIS:
 # Defile the quota warning limit (percentage)
