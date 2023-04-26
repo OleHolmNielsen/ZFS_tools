@@ -56,7 +56,6 @@ do
 		fslen=length(fsheader)
 		if (length(fs) > fslen) fslen=length(fs)
 		for (i=0; i<fslen; i++) fsline=fsline "-"	# Line below "Filesystem"
-		print ""
 		printf("%*-s %*-s --      Space      Quota   Pct.     Files     Quota   Pct.\n", 8 , "User", fslen, fsheader)
 		printf("%*s %*s --      -----      -----   ----     -----     -----   ----\n", 8 , "--------", fslen, fsline)
 		GB=1024*1024*1024
