@@ -52,6 +52,7 @@ for fs in $zfsVolumes
 do
 	/usr/sbin/zfs userspace $fs -pH -o name,quota,used,objquota,objused | awk -vlimit=$warn_limit -vfs=$fs -vusername=$username '
 	BEGIN {
+		# Table header
 		fsheader="Filesystem"
 		fslen=length(fsheader)
 		if (length(fs) > fslen) fslen=length(fs)
