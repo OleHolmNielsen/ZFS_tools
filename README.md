@@ -6,7 +6,7 @@ While introduced originally in the [Solaris][4] OS,
 [ZFS][1] has been ported to [ZFS_on_Linux][2].
 See also the [OpenZFS][3] developers page.
 
-Furthermore, we have written a quick [guide for configuring ZFS][6].
+Furthermore, we have written a [ZFS filesystems quick configuration guide][6].
 
 [1]: https://en.wikipedia.org/wiki/ZFS
 [2]: https://zfsonlinux.org/
@@ -33,7 +33,7 @@ We provide the following scripts for checking ZFS user quotas by the **root user
 
 4. [zfs_over_quota](zfs_over_quota) Send E-mail alerts from the file server to users who are getting close to their quota limit.
 
-Copy these scripts to the /usr/local/sbin/ folder.
+Copy these scripts to the ``/usr/local/sbin/`` folder.
 The [Makefile](Makefile) will install the scripts.
 
 Periodic reports can be sent by a crontab jobs, for example:
