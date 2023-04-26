@@ -2,7 +2,7 @@
 
 # Set ZFS filesystem user disk quotas values.
 
-# Usage: zfssetquota <userquota> <objquota> <filesystem> <username>
+# Usage: zfssetquota <userquota> <objquota> <filesystem> <username> [<username> ...]
 
 if [[ $# -ge 4 ]]
 then
