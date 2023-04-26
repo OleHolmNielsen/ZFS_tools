@@ -2,9 +2,9 @@
 
 # Notify users that are over their disk quota
 
-REPQUOTA=/usr/local/bin/zfsrepquota
-QUOTA=/usr/local/bin/zfsquota
-MAIL=/bin/mail
+REPQUOTA="/usr/local/bin/zfsrepquota"
+QUOTA="/usr/local/bin/zfsrepquota -u"
+MAIL="/bin/mail"
 
 USERS=`${REPQUOTA} | grep + | sed /none/d | awk '{print $1}'`
 HOST=`hostname`
