@@ -2,6 +2,7 @@
 
 # Notify users that are over their disk quota
 
+export PATH=/usr/local/sbin:$PATH
 REPQUOTA="zfsrepquota"
 QUOTA="zfsrepquota -u"
 MAIL="/bin/mail"
