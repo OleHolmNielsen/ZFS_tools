@@ -56,22 +56,27 @@ do
 		fslen=length(fsheader)
 		if (length(fs) > fslen) fslen=length(fs)
 		for (i=0; i<fslen; i++) fsline=fsline "-"	# Line below "Filesystem"
-		printf("%*-s %*-s --      Space      Quota   Pct.     Files     Quota   Pct.\n", 8 , "User", fslen, fsheader)
-		printf("%*s %*s --      -----      -----   ----     -----     -----   ----\n", 8 , "--------", fslen, fsline)
+		header1=sprintf("%*-s %*-s --      Space      Quota   Pct.     Files     Quota   Pct.", 8 , "User", fslen, fsheader)
+		header2=sprintf("%*s %*s --      -----      -----   ----     -----     -----   ----", 8 , "--------", fslen, fsline)
+		# Print global header only if username was not specified
+		if (length(username)==0) {
+			print header1
+			print header2
+		}
 		GB=1024*1024*1024
 	}
 	{ name=$1
-	# Check if username was specified
+	# Check if username was specified and matches
 	if (length(username)>0 && name != username) next
-	# Convert used space to GBytes
-	quota=$2 / GB
-	used=$3 / GB
+	quota=$2
+	used=$3
 	usedpercent=0
 	overused="-"
 	filesquota=$4
 	filesused=$5
 	filepercent=0
 	overfiles="-"
+	# Print percentages after the quotas
 	usedpercent= 0
 	if (quota>0) {
 		usedpercent= (used*100) / quota
@@ -82,8 +87,15 @@ do
 		filepercent= (filesused*100) / filesquota
 		if (filepercent>limit) overfiles="+"
 	}
-	# Print percentages after the quotas
-	printf("%-8s %*-s %1s%1s %9.1fG %9.0fG %6.1f %9d %9d %6.1f\n",
-		name, fslen, fs, overused, overfiles, used, quota, usedpercent, filesused, filesquota, filepercent)	
+	if (used>0 || filesused>0) {
+		# Print a header if username was specified
+		if (length(username)>0) {
+			print header1
+			print header2
+		}
+		printf("%-8s %*-s %1s%1s %9.1fG %9.0fG %6.1f %9d %9d %6.1f\n",
+			name, fslen, fs, overused, overfiles, used/GB, quota/GB, usedpercent,
+			filesused, filesquota, filepercent)	
+	}
 	}'
 done
