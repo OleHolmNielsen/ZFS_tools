@@ -36,7 +36,7 @@ We provide the following scripts for checking ZFS user quotas by the **root user
 Copy these scripts to the ``/usr/local/sbin/`` folder.
 The [Makefile](Makefile) will install the scripts.
 
-Periodic reports can be sent by a crontab jobs, for example:
+Periodic reports can be sent by a ``crontab`` job, for example:
 
 ```
 10 8,13,17 * * * /usr/local/sbin/zfs_over_quota
