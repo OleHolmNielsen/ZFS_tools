@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+# Set ZFS filesystem user disk quotas values.
+
+# Usage: zfssetquota <userquota> <objquota> <filesystem> <username>
+
+if [[ $# -ge 4 ]]
+then
+	userquota=$1
+	objquota=$2
+	filesystem=$3
+	shift 3	# Shift arguments, the remainder are users
+else
+	echo "ERROR: 4 or more arguments needed:"
+	echo "$0 <userquota> <objquota> <filesystem> <username> [<username> ...]"
+	exit 1
+fi
+
+for username in $*
+do
+	# Set new quotas
+	/usr/sbin/zfs set userquota@$username=$userquota userobjquota@$username=$objquota $filesystem
+	# Print quotas
+	zfsrepquota -u $username $filesystem
+done
